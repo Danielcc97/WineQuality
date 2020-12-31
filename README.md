@@ -56,7 +56,6 @@ El dataset ha sido subido a Zenodo y registrado con el DOI: [10.5281/zenodo.4263
 * Lawson, R. (2015). Web Scraping with Python. Packt Publishing Ltd.
 * Oheix, J. (2018, December 11). An introduction to web scraping with Python. https://towardsdatascience.com/an-introduction-to-web-scraping-with-python-a2601e8619e5 
 * Subirats Maté, L., & Calvo González, M. (2019). Web scraping. Editorial UOC.
-* Toscrape.com. (n.d.). Books to Scrape. Retrieved 7 November 2020, from https://books.toscrape.com/
 
 ## License 📄
 
