@@ -8,10 +8,11 @@ Versión definitiva de la práctica 2 (Limpieza y Análisis de datos) de la asig
 Para ejecutar el proyecto se necesita de las siguientes librerías:
 
 ```
-pip install BeautifulSoup
-pip install os
-pip install pandas
-pip install random
+library(corrplot)
+library(caret)
+library(pROC)
+library(nortest)
+
 pip install requests
 pip install time
 pip install tqdm
@@ -23,6 +24,7 @@ pip install urlparse
 * **dcervino_PRA2.Rmd**: Desarrollo de cada uno de los apartados de la práctica.
 * **dcervino_PRA2.pdf**: Contenido del desarrollo de los apartados de la práctica en formato PDF.
 * **dcervino_PRA2_Resumen.pdf**: Resumen del contenido de la práctica.
+* **modelC50.pdf**: Se trata del árbol de decisión generado por el algoritmo basado en la función C5.0.
 
 ## Despliegue-Ejecución 📦
 
@@ -38,7 +40,7 @@ Descargar el fichero dcervino_PRA2.Rmd y ejecutarlo.
 
 ## DOI 📖
 
-El dataset ha sido subido a Zenodo y registrado con el DOI: [10.5281/zenodo.4263215](https://doi.org/10.5281/ZENODO.4263215)
+Esta práctica ha sido registrado con el DOI: [10.5281/zenodo.4408489](https://doi.org/10.5281/zenodo.4408489)
 
 ## Referencias 🖇️
 
