@@ -25,8 +25,8 @@ pip install urlparse
 * **dcervino_PRA2.pdf**: Contenido del desarrollo de los apartados de la práctica en formato PDF.
 * **dcervino_PRA2_Resumen.pdf**: Resumen del contenido de la práctica.
 * **modelC50.pdf**: Se trata del árbol de decisión generado por el algoritmo basado en la función C5.0.
-* **Dataset.csv**: Se trata del dataset original de la práctica.
-* **data.new.pca.csv**: Se trata del dataset con los atributos ya reducidos.
+* **data/Dataset.csv**: Se trata del dataset original de la práctica cuando ya se ha unido los datos procedentes de ambos tipos de vinos.
+* **data/data.new.pca.csv**: Se trata del dataset con los atributos ya reducidos.
 
 ## Despliegue-Ejecución 📦
 
