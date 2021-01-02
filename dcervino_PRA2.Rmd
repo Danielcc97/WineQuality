@@ -1,0 +1,1026 @@
+---
+title: "Práctica 2 - Análisis y Limpieza de datos"
+author: "Daniel Laureano Cerviño Cortínez"
+date: "Diciembre 2020"
+output: pdf_document
+fig_caption: yes
+fig_height: 4
+fig_width: 4
+toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# 1. Descripción de la Actividad
+
+## 1.1. Introducción
+
+Esta práctica se centra en un caso práctica que consiste en el tratamiento de 
+un dataset con el fin de conocer aquellos datos que son relevantes para su
+estudio, y emplear las distintas técnicas de integración, limpieza, validación
+y análisis de las mismas.
+
+
+## 1.2. Objetivos
+
+Los objetivos que se pretenden cumplir con la elaboración de esta práctica, son:
+
+* Aprender a aplicar los conocimientos adquiridos y su capacidad de resolución 
+de problemas en entornos nuevos o poco conocidos dentro de contextos más amplios 
+o multidisciplinares.
+
+* Saber identificar los datos relevantes y los tratamientos necesarios (integración, limpieza
+y validación) para llevar a cabo un proyecto analítico.
+
+* Aprender a analizar los datos adecuadamente para abordar la información contenida en
+los datos.
+
+* Identificar la mejor representación de los resultados para aportar conclusiones sobre el
+problema planteado en el proceso analítico.
+
+* Actuar con los principios éticos y legales relacionados con la manipulación de datos en 
+función del ámbito de aplicación.
+
+* Desarrollar las habilidades de aprendizaje que les permitan continuar estudiando de un
+modo que tendrá que ser en gran medida autodirigido o autónomo.
+
+* Desarrollar la capacidad de búsqueda, gestión y uso de información y recursos en el
+ámbito de la ciencia de datos. 
+
+## 1.3. Competencias
+
+En esta práctica se desarrollan las siguientes competencias del Máster de Data Science:
+
+* Capacidad de analizar un problema en el nivel de abstracción adecuado a cada situación
+y aplicar las habilidades y conocimientos adquiridos para abordarlo y resolverlo.
+
+* Capacidad para aplicar las técnicas específicas de tratamiento de datos (integración,
+transformación, limpieza y validación) para su posterior análisis.
+
+
+# 2. Selección del juego de datos o dataset.
+
+Tras revisar distintos portales abiertos de datos como:
+
+* [kaggle](https://www.kaggle.com/datasets) 
+* [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php) 
+* [DATA.GOV](https://www.data.gov/)
+* [Datasets Wikipedia](https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research)
+* [London Datastore](https://data.london.gov.uk/)
+
+Me he decantado por utilizar el conjunto de datos proveniente del repositorio de datos sobre Machine Learning de UCI basado en la [calidad de los vinos](https://archive.ics.uci.edu/ml/datasets/Wine+Quality) 
+
+Teniendo en cuenta los objetivos de un proyecto de análisis de datos, he seleccionado este dataset por las siguientes razones:
+
+* Se trata de un juego de datos que puede ser emplear en términos reales para 
+conocer cuáles son las propiedades características de cada uno de los tipos de vinos disponibles. 
+Esta acción es muy importante para las empresas que elaboran inos y buscan mejorar sus productos.
+
+
+Teniendo en cuenta la elaboración de pruebas y métodos, he seleccionado este juego de datos por las siguientes razones:
+
+* Todos los tipos de variables del dataset son de tipo real. Lo cual es muy importante a la hora de trabajar con algoritmos no supervisados.
+
+* Se puede utilizar para labores de clasificación y regresión. Esto es debido a los atributos del dataset y a la existencia del atributo quality, que se trata de una variable cuyos valores muestran el grado de calidad del vino. Con esto podemos determinar que este juego de datos es válido para la práctica con algoritmos de aprendizaje supervisado y no supervisado.
+
+* Este juego de datos se puede utilizar para la aplicación de algoritmos basados en reglas de asociación con el fin de conocer las características de los atributos que llegan a darse para cada grado de calidad del vino.
+
+* El juego de datos se encuentra en una plataforma de alta fiabilidad.
+
+* Existen suficientes observaciones (6497) y atributos (12+1) para la aplciación de todo tipo de algoritmos.
+
+
+# 3. Importancia y objetivos del análisis
+
+A partir del conjunto de datos comentado anteriomente, se pretende conocer las características de cada uno de los tipos de vinos.
+Así como, cuáles son aquellas características más relevantes para determinar cuando un vino es considerado rojo o blanco. Para ello, comprobaremos la capacidad que tiene el juego de datos para someterse a una reducción de dimensiones con el fin de generar un clasificador entre vinos rojos y blancos mediante la aplicación de una serie de algoritmos.
+
+Como mencioné anteriormente, esta problemática es sumamente importante para aquellas empresas que se encargan de elaborar vinos
+con el fin de valorar y tener en cuenta aquellas propiedades o atributos más relevantes. Además, se podrían crear nuevos productos modificando las características de ellos que mejorasen la gama de productos de la empresa fabricante de vinos.
+
+
+# 4. Análisis exploratorio del juego de datos.
+
+El juego de datos está compuesto por 2 conjuntos, uno relacionado con vinos rojos y otro con vinos blancos.
+
+Los atributos que tenemos disponibles para cada uno de ellos son los siguientes:
+
+* **fixed.acidity.** Acidez fija.
+
+* **volatile.acidity.** Acidez volátil.
+
+* **citric.acid.** Ácido crítico.
+
+* **residual.sugar.** Azúcar residual
+
+* **chlorides.** Cloruros.
+
+* **free.sulfur.dioxide.** Dióxido de azufre libre.
+
+* **total.sulfur.dioxide.** Dióxido de azufre total.
+
+* **density.** Densidad.
+ 
+* **pH.** Potencial de Hidrógeno.
+
+* **sulphates** Sulfatos.
+
+* **alcohol** Alcohol.
+
+* **quality** Grado de calidad.
+
+
+Además, para la realización de este proyecto vamos a incluir el atributo Type con el fin de conocer si existen diferencias sustanciales entre vinos blancos y rojos.
+
+* **type.** Donde el valor 2 se trata de vinos blancos y el valor 1 se trata de un vino rojo.
+
+Cabe destacar que las clases de calidad de los vinos se encuentran ordenadas, aunque no se encuentran equilibradas.
+
+## 4.1 Carga de los datos
+
+En primer lugar, vamos a realizar la carga del juego de datos
+
+```{r load, echo=TRUE}
+data_red = read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv", 
+                    encoding = "UTF-8", sep = ";")
+data_white= read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv", 
+                     encoding = "UTF-8", sep = ";")
+```
+
+Vamos a comprobar el número de vinos que tenemos de cada tipo
+
+```{r typewine, echo=TRUE}
+nrow(data_red)
+nrow(data_white)
+```
+Como podemos comprobar, en nuestro juego de datos existen 1599 vinos rojos y 4898 vinos blancos.
+
+A continuación, vamos a crear el atributo *type*, para cada uno de los vinos siendo su valor 2 para vinos blancos y su valor 1 para vinos rojos.
+
+```{r createtype, echo=TRUE}
+data_white$type = rep(2,nrow(data_white))
+data_red$type = rep(1,nrow(data_red))
+
+head(data_white$type)
+head(data_red$type)
+
+```
+Una vez ya creada esta variable, vamos a generar un conjunto de datos que integre ambos juegos de datos.
+
+```{r loaddata, echo=TRUE}
+Dataset = rbind(data_white, data_red)
+
+nrow(Dataset)
+```
+## 4.2 Estadística descriptiva
+
+A continuación, vamos a conocer el comportamiento de los distintos atributos encontrados:
+
+```{r summary, echo=TRUE}
+summary(Dataset)
+```
+* El número de observaciones disponibles en el dataset es de 6497.
+
+* La media de la variable *fixed.acidity* es de 7.215 unidades. El valor mínimo es de 3.8 unidades, mientras
+que el valor máximo es de 15.900 unidades. La mitad de los valores de la variable *fixed.acidity* son inferiores
+o iguales a 7.000 y la otra mitad superiores. El 25% de los valores del atributo *fixed.acidity* son menores o
+iguales a 6.400 unidades. El 75% de los valores de la variable *fixed.acidity* son menores o iguales a 7.700 unidades.
+
+* La media de la variable *volatile.acidity* es de 0.3397 unidades. El valor mínimo es de 0.0800 unidades, mientras
+que el valor máximo es de 1.5800 unidades. La mitad de los valores de la variable *volatile.acidity* son inferiores
+o iguales a 0.2900 y la otra mitad superiores. El 25% de los valores del atributo *volatile.acidity* son menores o
+iguales a 0.2300 unidades. El 75% de los valores de la variable *volatile.acidity* son menores o iguales a 0.4000 unidades.
+
+* La media de la variable *citric.acid* es de 0.3186 unidades. El valor mínimo es de 0.0000 unidades, mientras
+que el valor máximo es de 1.66 unidades. La mitad de los valores de la variable *citric.acid* son inferiores
+o iguales a 0.3100 y la otra mitad superiores. El 25% de los valores del atributo *citric.acid* son menores o
+iguales a 0.2500 unidades. El 75% de los valores de la variable *citric.acid* son menores o iguales a 0.3900 unidades.
+
+* La media de la variable *residual.sugar* es de 5.443 unidades. El valor mínimo es de 0.600 unidades, mientras
+que el valor máximo es de 65.800 unidades. La mitad de los valores de la variable *residual.sugar* son inferiores
+o iguales a 3.000 y la otra mitad superiores. El 25% de los valores del atributo *residual.sugar* son menores o
+iguales a 1.800 unidades. El 75% de los valores de la variable *residual.sugar* son menores o iguales a 8.100 unidades.
+
+* La media de la variable *chlorides* es de 0.05603 unidades. El valor mínimo es de 0.00900 unidades, mientras
+que el valor máximo es de 0.61100 unidades. La mitad de los valores de la variable *chlorides* son inferiores
+o iguales a 0.04700 y la otra mitad superiores. El 25% de los valores del atributo *chlorides* son menores o
+iguales a 0.03800 unidades. El 75% de los valores de la variable *chlorides* son menores o iguales a 0.06500 unidades.
+
+* La media de la variable *free.sulfur.oxide* es de 30.53 unidades. El valor mínimo es de 1.00 unidades, mientras
+que el valor máximo es de 289.00 unidades. La mitad de los valores de la variable *free.sulfur.oxide* son inferiores
+o iguales a 29.00 y la otra mitad superiores. El 25% de los valores del atributo *free.sulfur.oxide* son menores o
+iguales a 17.00 unidades. El 75% de los valores de la variable *free.sulfur.oxide* son menores o iguales a 41.00 unidades.
+
+* La media de la variable *total.sulfur.oxide* es de 115.7 unidades. El valor mínimo es de 6.0 unidades, mientras
+que el valor máximo es de 77.0 unidades. La mitad de los valores de la variable *total.sulfur.oxide* son inferiores
+o iguales a 118.0 y la otra mitad superiores. El 25% de los valores del atributo *total.sulfur.oxide* son menores o
+iguales a 77.0 unidades. El 75% de los valores de la variable *total.sulfur.oxide* son menores o iguales a 440.0 unidades.
+
+* La media de la variable *density* es de 0.9947 unidades. El valor mínimo es de 0.9871 unidades, mientras
+que el valor máximo es de 1.0390 unidades. La mitad de los valores de la variable *density* son inferiores
+o iguales a 0.9949 y la otra mitad superiores. El 25% de los valores del atributo *density* son menores o
+iguales a 0.9923 unidades. El 75% de los valores de la variable *density* son menores o iguales a 0.9970 unidades.
+
+* La media de la variable *pH* es de 3.219 unidades. El valor mínimo es de 2.720 unidades, mientras
+que el valor máximo es de 4.010 unidades. La mitad de los valores de la variable *pH* son inferiores
+o iguales a 3.210 y la otra mitad superiores. El 25% de los valores del atributo *pH* son menores o
+iguales a 3.110 unidades. El 75% de los valores de la variable *pH* son menores o iguales a 3.320 unidades.
+
+* La media de la variable *sulphates* es de 0.5313 unidades. El valor mínimo es de 0.2200 unidades, mientras
+que el valor máximo es de 2.0000 unidades. La mitad de los valores de la variable *sulphates* son inferiores
+o iguales a 0.5100 y la otra mitad superiores. El 25% de los valores del atributo *sulphates* son menores o
+iguales a 0.4300 unidades. El 75% de los valores de la variable *sulphates* son menores o iguales a 0.6000 unidades.
+
+* La media de la variable *alcohol* es de 10.49 unidades. El valor mínimo es de 8.00 unidades, mientras
+que el valor máximo es de 14.90 unidades. La mitad de los valores de la variable *alcohol* son inferiores
+o iguales a 10.30 y la otra mitad superiores. El 25% de los valores del atributo *alcohol* son menores o
+iguales a 9.50 unidades. El 75% de los valores de la variable *alcohol* son menores o iguales a 11.30 unidades.
+
+* La media de la variable *quality* es de 5.818 unidades. El valor mínimo es de 3.000 unidades, mientras
+que el valor máximo es de 9.000 unidades. La mitad de los valores de la variable *quality* son inferiores
+o iguales a 6.000 y la otra mitad superiores. El 25% de los valores del atributo *quality* son menores o
+iguales a 5.000 unidades. El 75% de los valores de la variable *quality* son menores o iguales a 6.000 unidades.
+
+* Como podemos comprobar, en nuestro juego de datos existen 1599 vinos rojos y 4898 vinos blancos. Por lo que *type*=2 se encontrará 4898 veces y *type*=1 se encontrará 1599 veces.
+
+
+
+```{r type, echo=TRUE}
+sapply(Dataset, function(x) class(x))
+
+```
+Podemos observar que el tipo de cada una de las variables que tenemos disponibles en el dataset es de tipo numeric o integer.
+
+Observación de las primeras observaciones del dataset
+
+```{r head, echo=TRUE}
+head(Dataset)
+```
+
+# 5. Limpieza de datos
+
+En primer lugar, vamos comprobar si existen campos con valores con NA
+
+````{r nas, echo=TRUE}
+colSums(is.na(Dataset))
+```
+En segundo lugar, vamos a comprobar si existen atributos con valores vacíos.
+```{r empty, echo=TRUE}
+colSums(Dataset=="")
+```
+
+Gracias a la información mostrada, podemos determinar que no existen valores vacíos ni nulos dentro de los atributos que componen nuestro juego de datos.
+
+# 6. Análisis de cada uno de los atributos disponibles
+
+## 6.1. Análisis del comportamiento de las variables y detección de valores atípicos u outliers
+
+A continuación vamos a mostrar cómo se distribuye cada una de las variables que componen nuestro juego de datos.
+
+* *fixed.acidity*
+
+```{r fixedacidity, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$fixed.acidity, main="Histogram of Fixed Acidity", 
+     xlab ="Fixed Acidity")
+boxplot(Dataset$fixed.acidity, main="Boxplot of Fixed Acidity", 
+        ylab="Fixed Acidity")
+plot(Dataset$fixed.acidity, main="ScatterPlot of Fixed Acidity",
+     ylab="Fixed Acidity")
+
+which.max(table(Dataset$fixed.acidity))
+
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *fixed.acidity.* Además, el valor modal de la variable *fixed.acidity* es de 6.8 unidades.
+
+
+* *volatile.acidity*
+
+```{r volatileacidity, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$volatile.acidity, main="Histogram of Volatile Acidity", 
+     xlab ="Volatile Acidity")
+boxplot(Dataset$volatile.acidity, main="Boxplot of Volatile Acidity", 
+        ylab="Volatile Acidity")
+plot(Dataset$volatile.acidity, main="ScatterPlot of Volatile Acidity", 
+     ylab="Volatile Acidity")
+
+which.max(table(Dataset$volatile.acidity))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *volatile.acidity.* Además, el valor modal de la variable *volatile.acidity* es de 0.28 unidades.
+
+
+* *citric.acid*
+
+```{r citricacid, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$citric.acid, main="Histogram of Citric Acid", xlab ="Citric Acid")
+boxplot(Dataset$citric.acid, main="Boxplot of Citric Acid", ylab="Citric Acid")
+plot(Dataset$citric.acid, main="ScatterPlot of Citric Acid", ylab="Citric Acid")
+
+which.max(table(Dataset$citric.acid))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *citric.acid.* Además, el valor modal de la variable *citric.acid* es de 0.3 unidades.
+
+* *residual.sugar*
+
+```{r residualsugar, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$residual.sugar, main="Histogram of Residual Sugar", 
+     xlab ="Residual Sugar")
+boxplot(Dataset$residual.sugar, main="Boxplot of Residual Sugar", 
+        ylab="Residual Sugar")
+plot(Dataset$residual.sugar, main="ScatterPlot of Residual Sugar", 
+     ylab="Residual Sugar")
+
+which.max(table(Dataset$residual.sugar))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *residual.sugar.* Además, el valor modal de la variable *residual.sugar* es de 2.0 unidades.
+
+
+* *chlorides*
+
+```{r chlorides, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$chlorides, main="Histogram of Chlorides", xlab ="Chlorides")
+boxplot(Dataset$chlorides, main="Boxplot of Chlorides", ylab="Chlorides")
+plot(Dataset$chlorides, main="ScatterPlot of Chlorides", ylab="Chlorides")
+
+which.max(table(Dataset$chlorides))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *chlorides.* Además, el valor modal de la variable *chlorides* es de 0.044 unidades.
+
+
+* *free.sulfur.dioxide*
+
+```{r freesulfurdioxide, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$free.sulfur.dioxide, main="Histogram of Free Sulfur Dioxide", 
+     xlab ="Free Sulfur Dioxide")
+boxplot(Dataset$free.sulfur.dioxide, main="Boxplot of Free Sulfur Dioxide", 
+        ylab="Free Sulfur Dioxide")
+plot(Dataset$free.sulfur.dioxide, main="ScatterPlot of Free Sulfur Dioxide", 
+     ylab="Free Sulfur Dioxide")
+
+which.max(table(Dataset$free.sulfur.dioxide))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *free.sulfur.dioxide.* Además, el valor modal de la variable *free.sulfur.dioxide* es de 29.00 unidades.
+
+* *total.sulfur.dioxide*
+
+```{r totalsulfurdioxide, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$total.sulfur.dioxide, main="Histogram of Total Sulfur Dioxide", 
+     xlab ="Total Sulfur Dioxide")
+boxplot(Dataset$total.sulfur.dioxide, main="Boxplot of Total Sulfur Dioxide", 
+        ylab="Total Sulfur Dioxide")
+plot(Dataset$total.sulfur.dioxide, main="ScatterPlot of Total Sulfur Dioxide", 
+     ylab="Total Sulfur Dioxide")
+
+which.max(table(Dataset$total.sulfur.dioxide))
+```
+
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *total.sulfur.dioxide.* Además, el valor modal de la variable *total.sulfur.dioxide* es de 111.00 unidades.
+
+* *density*
+
+```{r density, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$density, main="Histogram of Density", xlab ="Density")
+boxplot(Dataset$density, main="Boxplot of Density", ylab="Density")
+plot(Dataset$density, main="ScatterPlot of Density", ylab="Density")
+
+which.max(table(Dataset$density))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *density.* Además, el valor modal de la variable *density* es de 0.9972 unidades. 
+ 
+* *pH*
+
+```{r pH, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$pH, main="Histogram of pH", xlab ="pH")
+boxplot(Dataset$pH, main="Boxplot of pH", ylab="pH")
+plot(Dataset$pH, main="ScatterPlot of pH", ylab="pH")
+
+which.max(table(Dataset$pH))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *pH.* Además, el valor modal de la variable *pH* es de 3.16 unidades. 
+
+
+* *sulphates*
+```{r sulphates, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$sulphates, main="Histogram of Sulphates", xlab ="Sulphates")
+boxplot(Dataset$sulphates, main="Boxplot of Sulphates", ylab="Sulphates")
+plot(Dataset$sulphates, main="ScatterPlot of Sulphates", ylab="Sulphates")
+
+which.max(table(Dataset$sulphates))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *sulphates.* Además, el valor modal de la variable *sulphates* es de 0.5 unidades. 
+
+* *alcohol*
+
+```{r alcohol, echo=TRUE}
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+hist(Dataset$alcohol, main="Histogram of Alcohol", xlab ="Alcohol")
+boxplot(Dataset$alcohol, main="Boxplot of Alcohol", ylab="Alcohol")
+plot(Dataset$alcohol, main="ScatterPlot of Alcohol", ylab="Alcohol")
+
+which.max(table(Dataset$alcohol))
+```
+Observando las distintas visualizaciones podemos contemplar que existen una serie de outliers o valores
+atípicos para la variable *alcohol.* Además, el valor modal de la variable *alcohol* es de 9.5 unidades. 
+
+* *quality*
+
+```{r quality, echo=TRUE}
+
+barplot(table(Dataset$quality), main="Distribución de Quality", ylim=c(0, 3000))
+
+which.max(table(Dataset$quality))
+
+```
+Podemos observar que el valor modal de la variable *quality* es de 6 unidades. 
+
+* *type*
+
+```{r type2, echo=TRUE}
+barplot(table(Dataset$type), main="Distribución de Type", xlim=c(0, 5000), 
+        horiz=TRUE, las=1)
+```
+Como podemos comprobar, en nuestro juego de datos existen 1599 *vinos rojos* y 4898 *vinos blancos*. Por lo que *type=2* se encontrará 4898 veces y *type=1* se encontrará 1599 veces.
+
+Como se puede observar, en cada uno de los atributos que componen el juego de datos se encuentran valores atípicos u outliers. Esto puede ser consecuencia de que los datos se encuentren desequilibrados en relación a los distintos tipos de calidad de vinos. Por lo cual, no sería necesario eliminar estas observaciones atípicas debido a que forman parte del dominio de datos de cada una de las variables y las consideramos como legítimas para su estudio. Esto se puede observar en la propia descripción del dataset. Si se eliminaran estas observaciones, se produciría un sesgo debido a que sólo obtendríamos vinos de una calidad, o baja o alta.
+
+
+
+## 6.2. Correlación entre variables
+
+A continuación, estudiaremos la correlación entre las distintas variables de las que se compone el juego de datos mediante el paquete corrplot.
+```{r corplot, echo=TRUE, warning=FALSE, fig.width=14}
+library(corrplot)
+matriz = cor(Dataset, method = "pearson")
+corrplot(matriz, method="circle")
+corrplot(matriz, method="number")
+
+matriz
+
+```
+
+De esta matriz de correlación de Pearson podemos observar las relaciones entre las distintas variables disponibles en el conjunto de datos. Atendiendo a ella, podemos destacar:
+
+* La relación entre la variable entre *free.sulfur.oxide* y *total.free.oxide* tiene un valor de 0.72. Por lo cual, se trataría de una relación fuerte y positiva. Esto es debido a que ambas variables tratan aspectos similares.
+
+* La relación entre la variable *type* y *total.sulfur.dioxide* es fuerte y negativa con un valor de -0.7. Con esto podemos llegar a la conclusión de que los vinos blancos tengan un valor para la variable *total.sulfur.dioxide* alto, y viceversa con los vinos rojos.
+
+* La relación entre la variable *type* y *volatile.acidity* es fuerte y positiva con un valor de 0.65. Con esto podemos llegar a la conclusión de que los vinos blancos tengan un valor para la variable *volatile.acidity* bajo, y viceversa con los vinos rojos.
+
+* La relación entre la variable *alcohol* y *density* es fuerte y negativa con un valor de -0.69. Con esto podemos llegar a la conclusión de que los vinos que tengan un alto valor de *alcohol*, tengan un valor de densidad bajo.
+
+La matriz de correlación de Pearson indica la relación existente entre variables. Propone valores entre -1 y 1. Mientras más cercano a límite inferior, la relación será negativa, y viceversa. Mientras más se acerque el valor a 0, nos encontraremos a una relación débil, mientras que si nos acercamos a los límites (sobre 1 y -1), la relación entre atributos será fuerte. 
+
+Cabe recordar que una relación positiva indica que si se aumenta el valor de una variable, aumenta la de otra. Mientras que, si la relación es negativa, al aumentar el valor de una variable, la otra disminuiría.
+
+Los ejemplos comentados anteriormente hacen referencia a las relaciones más destacables dentro del juego de datos.
+
+
+## 6.3. Discretización
+
+A continuación, vamos a comprobar si tiene sentido aplicar cualquier método de discretización a alguna variable
+
+```{r discrete, echo=TRUE}
+apply(Dataset, 2, function(x) length(unique(x)))
+```
+Como podemos observar, para las únicas variables a las que tendría sentido aplicar métodos de discretización serían las variables *quality* y *type.*
+
+```{r discrete2, echo=TRUE}
+Dataset$quality = as.factor(Dataset[,12])
+Dataset$type = as.factor(Dataset[,13])
+summary(Dataset)
+```
+
+# 7. Selección de los grupos de datos a analizar a través de PCA
+
+Una vez ya se hayan realizado las acciones de análisis, modelado y limpieza de los datos, se procede a investigar si se puede reducir el número de dimensiones que posee el dataset a través de las distintas características que ofrece el comportamiento de cada uno de los atributos. Cabe destacar que los atributos que intentaremos reducir son aquellos excepto las variables quality y type. Esto es debido a que las utilizaremos para una futura clasificación. Para ello, se emplearán los siguientes métodos:
+
+```{r pca1, echo=TRUE}
+
+Dataset.pca = prcomp(Dataset[,c(1:11)], center = TRUE, scale=TRUE)
+Dataset.pca
+```
+En primer lugar, se muestran las desviaciones estándar de cada una de las componentes a destacar. Podemos observar que su valor desciende a medida que avanzamos a lo largo de las componentes principales.
+
+En segundo lugar, se observa la matriz Rotation, que muestra los valores propios relacionados a los componentes principales. Estos son los coeficientes que asociados con cada variable da lugar a cada componente a través de una combinación lineal.
+
+Por ejemplo, el cálculo de la componente PC1, tenemos:
+
+PC1 = fixed.acidity * 0.2388 + volatile.acidity * 0.3808 + ... + alcohol * 0.1064
+
+Mientras mayor sea en términos absolutos el coeficiente, mayor peso tendrá en el cálculo de la componente.
+
+
+```{r pca2, echo=TRUE}
+summary(Dataset.pca)
+```
+De este resumen podemos destacar las siguientes observaciones:
+
+* El primer componente principal es capaz de explicar el 27.54% de la varianza, el segundo componente el 22.67% de esta, y así sucesivamente.
+
+* Las proporciones de varianzas mostradas no son muy altas (la máxima es 27.54%), esto indica la baja dependencia entre atributos.
+
+* Podemos destacar que los tres primeros componentes son aquellos que explican la mayor parte de la varianza, en comparación con el resto. 
+
+* Ateniendo a la proporción acumulativa de varianzas, podemos terminar que con las dos primeras componentes se puede explicar el 50.21% de la variabilidad de la muestra, mientras que si seleccionamos las 4 primeras podemos explicar el 73.19% de la muestra. Si seleccionamos todas las componentes explicaríamos el 100% de la totalidad de la muestra, lo que no podríamos reducir el número de variables dentro del juego de datos.
+
+
+A continuación, vamos a mostrar una serie de visualizaciones con la finalidad de obtener información para determinar el número de componentes que podríamos utilizar para nuestro estudio.
+
+```{r plotpca, echo=TRUE}
+plot(Dataset.pca, type="l", ylim=c(0.0,4.0), main="PCA - Variances")
+```
+Como se puede observar, mientras más avanzamos en los distintos componentes, el valor de la varianza se reduce.
+
+```{r plotpca01, echo=TRUE}
+plot((Dataset.pca$sdev^2 / sum(Dataset.pca$sdev^2)), type="l", ylim=c(0.0,0.3), 
+     main="PCA - Proportion of Variance Explained", 
+     ylab="Proportion of Variance Explained", xlab="Principal Components")
+```
+Como se puede observar, a medida que avanzamos en las componentes, se reduce la proporción de varianza explicada por cada una de ellas.
+
+```{r plotpca02, echo=TRUE}
+plot(cumsum(Dataset.pca$sdev^2 / sum(Dataset.pca$sdev^2)), type="l", 
+     ylim=c(0.0,1.0), main="PCA - Accumulative Proportion of Variance Explained", 
+     ylab="Proportion of Variance Explained", xlab="Principal Components")
+```
+Como se puede observar, a medida que avanzamos en las componentes, aumenta la proporción acumulada de varianza explicada por cada una de ellas hasta llegar al 1.0, que será el 100%.
+
+
+
+Atendiendo a las visualizaciones, podemos determinar lo siguiente:
+
+A través del *elbow method* podemos determinar que el *número de componentes* suficientes para explicar la variabilidad  de la muestra sería 4, en un 73.187%, lo cual es suficiente para nuestro estudio. Además, es suficiente debido a que como se muestra en este capítulo del libro ["A step-by-step approach to using the SAS system for univariate and multivariate statistics"](https://www.researchgate.net/profile/Ehsan_Khedive/post/How_many_components_can_I_retrieve_in_principal_component_analysis/attachment/59d626f2c49f478072e9b1be/AS%3A272185124425729%401441905398541/download/Principal+Component+Analysis+SAS.pdf)
+
+
+A continuación, vamos a representar cada una de las puntuaciones de los pares de componentes con la finalidad de encontrar relaciones entre estos.
+
+En estas visualizaciones hay que tener en cuenta lo siguiente:
+
+* A medida que es mayor el tamaño de la flecha, mayor será la influencia del atributo en el componente.
+
+* La dirección de la flecha muestra hacia qué componente representa en mayor medida dicho atributo. Si se mueve en el eje vertical hace referencia a que representa más el componente del eje izquierdo al atributo, y viceversa.
+
+* La separación entre las flechas de las variables muestran su correlación. Si las flechas se encuentran formando un ángulo de 90º no existiría relación entre los atributos involucrados. Y si forman un ángulo de 180º la relación entre ellos es negativa.
+
+
+* PC1 y PC2
+
+```{r pcaplot1, echo=TRUE, fig.width=12}
+biplot(x = Dataset.pca, col= c("blue4", "brown3"), choices = c(1,2))
+```
+
+En esta visualización podemos observar la alta correlación positiva entre *total.sulfur.dioxide* y *free.sulfur.dioxide.*
+
+Las variables *density* y *alcohol* son las que tienen una alta influencia. Y además, la relación entre estos atributos es negativa.
+
+Podemos observar que el componente PC2 representa en mayor medida a las variables *density* y *alcohol.*
+
+
+
+Podemos observar que 
+
+* PC3 y PC4
+
+```{r pcaplot2, echo=TRUE,fig.width=12}
+biplot(x = Dataset.pca, col= c("blue4", "brown3"), choices = c(3,4))
+```
+
+En esta visualización podemos observar las bajas correlaciones entre atributos, en términos generales.
+
+Las variables *sulphates* y *citric.acid* son las que tienen una alta influencia.
+
+Podemos observar que el componente PC3 representa en mayor medida a la variable *sulphates.*
+
+
+* PC5 y PC6
+
+```{r pcaplot3, echo=TRUE,fig.width=14}
+biplot(x = Dataset.pca, col= c("blue4", "brown3"), choices = c(5,6))
+```
+
+En esta visualización podemos observar la correlación negativa entre *chlorides* y *residual.sugar.*
+
+Las variables *alcohol*, *chlorides* y *pH* son las que tienen una alta influencia.
+
+Podemos observar que el componente PC5 representa en mayor medida a la variable *density.*
+
+* PC7 y PC8
+
+
+```{r pcaplot4, echo=TRUE,fig.width=14}
+biplot(x = Dataset.pca, scale=0,col= c("blue4", "brown3"), choices = c(7,8))
+```
+
+En esta visualización podemos observar la correlación negativa entre *sulphates* y *volatile.acidity.*
+
+Las variables *fixed.acidity*, *sulphates* y *residual.sugar* son las que tienen una alta influencia.
+
+Podemos observar que el componente PC8 representa en mayor medida a la variable *pH.*
+
+* PC9 y PC10
+
+
+```{r pcaplot5, echo=TRUE,fig.width=12}
+biplot(x = Dataset.pca, scale=0, col= c("blue4", "brown3"), choices = c(9,10))
+```
+
+En esta visualización podemos observar la alta correlación negativa entre *free.sulfur.dioxide* y *total.sulfur.dioxide.*
+
+Las variables *free.sulfur.dioxide* y *total.sulfur.dioxide* son las que tienen una alta influencia.
+
+Podemos observar que el componente PC9 representa en mayor medida a la variable *residual.sugar.*
+
+* PC10 y PC11
+
+
+```{r pcaplot6, echo=TRUE, fig.width=12}
+biplot(x = Dataset.pca, scale=0,col= c("blue4", "brown3"), choices = c(10,11))
+```
+
+En esta visualización podemos observar la alta correlación negativa entre *density* y *residual.sugar.*
+
+Las variables *residual.sugar* y *density* son las que tienen una alta influencia.
+
+Podemos observar que el componente PC11 representa en mayor medida a las variables *density* y *residual.sugar.*
+
+*Creación del nuevo Dataset*
+A continuación, vamos a crear el nuevo Dataset a partir de los componentes más representativos. Recordemos que serán los 4 primeros componentes y los dos últimos atributos del juego de datos original.
+
+```{r newdata1, echo=TRUE}
+pc1 <- apply(Dataset.pca$rotation[,1]*Dataset[,c(1:11)], 1, sum)
+pc2 <- apply(Dataset.pca$rotation[,2]*Dataset[,c(1:11)], 1, sum)
+pc3 <- apply(Dataset.pca$rotation[,3]*Dataset[,c(1:11)], 1, sum)
+pc4 <- apply(Dataset.pca$rotation[,4]*Dataset[,c(1:11)], 1, sum)
+
+data.new.pca = cbind(pc1,pc2,pc3,pc4)
+data.new.pca = as.data.frame(data.new.pca)
+colnames(data.new.pca) = c("PC1","PC2","PC3","PC4")
+head(data.new.pca)
+
+data.new.pca$quality = as.numeric(Dataset$quality)
+data.new.pca$type = as.numeric(Dataset$type)
+
+
+```
+
+
+
+# 8. Comprobación de normalidad y homogeneidad de la varianza
+
+##  8.1. Comprobación de normalidad
+
+A continuación, vamos a comprobar que los valores que toman nuestras variables
+cuantitativas provienen de una población distribuida normalmente.
+
+En primer lugar, vamos a representar a través de Histogramas las distintas variables
+para conocer su distribución de datos a priori.
+
+```{r hist, echo=TRUE}
+
+par(mfrow=c(3,2))
+hist(data.new.pca$PC1, main="Histogram of PC1", xlab ="PC1")
+hist(data.new.pca$PC2, main="Histogram of PC2", xlab ="PC2")
+hist(data.new.pca$PC3, main="Histogram of PC3", xlab ="PC3")
+hist(data.new.pca$PC4, main="Histogram of PC4", xlab ="PC4")
+hist(data.new.pca$type, main="Histogram of Type", xlab ="Type")
+hist(data.new.pca$quality, main="Histogram of Quality", xlab ="Quality")
+
+
+```
+Visualizando los distintos histogramas,podemos contemplar que las variables PC1, PC2, PC3 y PC4 sí siguen una distribución
+normal debido a su forma similar a la campana de Gauss. Aunque en la variable PC4 no se ve de forma tan clara.
+
+Debido a que esto es una medida subjetiva. Procederemos a realizar dos tipos de tests estadísticos para
+comprobar si las distintas variables siguen una distribución normal, como son el test de Anderson-Darling
+y el test de Lilliefors que se basa en el test de Kolmogorov-Smirnov.
+
+Cabe destacar que si el valor del estadístico p es superior al nivel de significación 0.05, pues
+se considera que la variable sigue una distribución normal, y viceversa.
+
+Esta serie de test estadísticos se encuentra disponible en el paquete nortest
+```{r norm1, echo=TRUE}
+library(nortest)
+require(nortest)
+
+
+
+# Test de Anderson-Darling
+ad.test(data.new.pca$PC1)
+ad.test(data.new.pca$PC2)
+ad.test(data.new.pca$PC3)
+ad.test(data.new.pca$PC4)
+ad.test(data.new.pca$type)
+ad.test(data.new.pca$quality)
+
+# Test de Lilliefors
+
+lillie.test(data.new.pca$PC1)
+lillie.test(data.new.pca$PC2)
+lillie.test(data.new.pca$PC3)
+lillie.test(data.new.pca$PC4)
+lillie.test(data.new.pca$type)
+lillie.test(data.new.pca$quality)
+
+```
+Teniendo en cuenta los valores de los tests realizados. Podemos observar que ninguna de las variables 
+que tenemos disponibles siguen una distribución normal.
+
+
+## 8.2. Comprobación de la homocedasticidad de la varianza
+
+Para ello, utilizaremos el test de Fligner-Killen debido a que las variables que tenemos
+disponibles no cumplen con la condición de normalidad.
+
+La hipóstesis nula de este tipo de test asume la igualdad de varianzas.
+Cabe destacar que si el valor del estadístico p es superior al nivel de significación 0.05, se indica homocedasticidad, y viceversa.
+
+```{r fligner, echo=TRUE}
+fligner.test(PC1 ~ type, data=data.new.pca)
+fligner.test(PC2 ~ type, data=data.new.pca)
+fligner.test(PC3 ~ type, data=data.new.pca)
+fligner.test(PC4 ~ type, data=data.new.pca)
+
+fligner.test(PC1 ~ quality, data=data.new.pca)
+fligner.test(PC2 ~ quality, data=data.new.pca)
+fligner.test(PC3 ~ quality, data=data.new.pca)
+fligner.test(PC4 ~ quality, data=data.new.pca)
+
+fligner.test(type ~ quality, data=data.new.pca)
+fligner.test(quality ~ type, data=data.new.pca)
+
+
+```
+
+
+Teniendo en cuenta la información presentada gracias al test de Fligner-Killen, podemos destacar que las variables PC4 y quality y quality y type presentan homocedasticidad o igualdad de varianzas. Esto es debido a que el valor del estadístico p, resulta superior a 0.05.
+
+El resto de variables se comportan de forma que sus valores presentan heterocedasticidad.
+
+
+# 9. Aplicación de pruebas estadísticas
+
+## 9.1. Correlación entre los distintos atributos ya reducidos.
+
+A continuación, vamos a mostrar la matriz de correlación de Pearson de aquellos atributos
+que conforma el juego de datos ya reducido. Esta acción se realizará a través del paquete corrplot.
+
+```{r corrplot, echo=TRUE}
+library(corrplot)
+mat = cor(data.new.pca, method = "pearson")
+corrplot(mat, method="circle")
+corrplot(mat, method="number")
+
+mat
+
+```
+Como podemos observar, las relaciones existentes entre los distintos atributos es
+baja.
+
+## 9.2. Clasificación a través de algoritmo basado en árboles de decisión
+
+En este apartado vamos a comprobar la capacidad de nuestros datos para distinguir entre
+un tipo de vino u otro a través de un algoritmo de clasificación basado en árboles de decisión.
+
+
+En primer lugar, vamos a preparar los datos entre datos de entrenamiento y de prueba.
+
+Para implementar un algoritmo basado en árboles de decisión, vamos a reordenar los atributos de forma aleatoria. Y vamos a distribuir el juego de datos tanto en datos de entrenamiento (2/3) y en datos de prueba o test (1/3).
+
+Recordamos que tenemos disponibles 6497 observaciones, lo cuál para el conjunto de entrenamiento tendríamos 4332 observaciones y para el conjunto de prueba tendríamos 2165 observaciones.
+
+```{r select, echo=TRUE}
+
+set.seed(12345)
+Dataset_order = data.new.pca[sample(nrow(data.new.pca)),]
+
+Y = Dataset_order[,6]
+X = Dataset_order[,1:5]
+
+trainX = X[1:4332,]
+trainY = Y[1:4332]
+testX = X[4333:6497,]
+testY = Y[4333:6497]
+```
+
+Tras preparar el conjunto de datos, aplicaremos el algoritmo basado en la función C5.0
+
+```{r c50, echo=TRUE}
+model = C50::C5.0(trainX, as.factor(trainY), rules=TRUE)
+summary(model)
+
+```
+
+Atendiendo a los errores, nuestro modelo tiene una tasa de error del 6.6% que se trata de 286 observaciones. Cabe destacar que estas observaciones son mayoritarias en las clases de vinos blancos que en la de rojos.
+
+A la hora de entrenar el modelo para la futura realización de predicciones se puede encontrar que la contribución de la variable PC4 ha sido de un 93.47%, la de PC3 un 85.96%, la de buying un 84.90%, etc.
+
+Se han generado 24 reglas de decisión, donde podemos destacar las siguientes:
+
+* Regla 1. Los vinos cuyos valores del componente 2 se encuentre entre -38.95816 (no incluido) y -23.74493 (incluido),  el valor del componente 3 es superior a 2.711789 y el valor de la componente 4 se encuentre entre -2.549877(no incluido) y 32.58266(incluido) , son considerados como vinos rojos con una validez del 97.5%.
+
+* Regla 10. Los vinos cuyos valores del componente 1 es superior a -37.21238, el valor del componente 2 es superior a -23.744493 y el valor de la componente 4 es superior a 56.811179, son considerados como vinos blancos con una validez del 98.5%.
+
+* Regla 11. Los vinos cuyos valores del componente 3 es inferior o igual a -37.64994 y el valor del grado de calidad sea superior a 5, son considerados como vinos blancos con una validez del 98.3%.
+
+* Regla 12. Los vinos cuyos valores del componente 2 es superior a -23.74493, el valor del componente 3 es superior a 26.99381, el valor de la componente 4 es inferior o igual a 28.6102 y el grado de calidad es superior a 5, son considerados como vinos blancos con una validez del 98.2%.
+
+* Regla 13. Los vinos cuyos valores del componente 1 es superior a -30.41101, el valor del componente 2 sea inferior o igual a -38.95816 y el valor del grado de calidad sea superior a 6, son considerados como vinos blancos con una validez del 98.1%.
+
+Estos son algunos ejemplos de interpretación de las reglas que ha generado nuestro árbol de decisión.
+
+A continuación mostraremos el árbol de decisión generado y lo almacenaremos en PDF para su mejor visualización.
+
+```{r plot, echo=TRUE, fig.width=16}
+model = C50::C5.0(trainX, as.factor(trainY))
+plot(model)
+```
+```{r save, echo=TRUE}
+pdf("modelC50.pdf", width=30, height = 30)
+plot(model)
+dev.off()
+
+```
+A continuación, vamos a probar nuestro modelo entrenado con el conjunto de datos de prueba o test.
+
+Para ello, cargaremos la librería caret con el fin de generar la matriz de confusión.
+
+```{r pred, echo=TRUE}
+
+library(caret)
+predict_model = predict(model, testX, type="class")
+confusionMatrix(predict_model,as.factor(testY),positive="2")
+```
+
+De esta matriz de confusión se pueden obtener las siguientes conclusiones:
+
+Nuestro modelo es capaz de clasificar correctamente 1993 vinos del total que ha sido 2165. Por lo cual, clasifica adecuadamente un 92.06% de los vinos, tratándose del valor de la precisión del modelo. Y tiene una tasa de errores del 7.94%, donde se encuentran los 172 vinos restantes. Podemos determinar que el ajuste proporcionado por el modelo es bastante bueno debido a que su tasa de acierto es bastante elevada y su tasa de error es bastante baja. Cabe destacar que esto es teniendo en cuenta que hemos empleado los distintos componentes resultantes del PCA que ofrecen un peor resultado en términos generales que el uso de todos los atributos del conjunto de datos.
+
+De los vinos que se consideran rojos realmente, se han clasificado incorrectamente 119 vinos considerándolos blancos, tratándose del 22.11%.
+
+De los vinos que se consideran blancos realmente, se han clasificado incorrectamente 53 vinos considerándolos rojos, tratándose del 1.41%.
+
+Podemos observar que el mayor porcentaje de error aparece en la clasificación de vehículos que realmente son realmente rojos y considerados como blancos. Esto puede ser debido a que el conjunto de datos no se encuentra equilibrado. Esto es debido a que existen un mayor número de vinos blancos que rojos.
+
+
+A continuación, vamos a mostrar el desempeño de nuestro modelo a través de la curva ROC mediante la librería pROC.
+
+```{r roc, echo=TRUE, warning=FALSE}
+library(pROC)
+
+curve <- roc(testY,as.numeric(predict_model),
+            smoothed = TRUE,
+            # arguments for ci
+            ci=TRUE, ci.alpha=0.95, stratified=FALSE,
+            # arguments for plot
+            plot=TRUE, auc.polygon=TRUE, max.auc.polygon=TRUE, grid=TRUE,
+            print.auc=TRUE, show.thres=TRUE)
+
+
+curve2 <- ci.se(curve)
+plot(curve2, type="shape", col="lightblue")
+plot(curve2, type="bars")
+
+```
+Teniendo en cuenta la informaicón mostrada, podemos destacar que nuestro modelo ofrece
+un rendimiento aceptable debido a que la forma de la curva ROC es similar a la que tiene que producirse
+en el caso de clasificación perfecto. Además, el valor del área bajo la curva ROC es cercano a 1, por lo que
+manifiesta el gran desempeño de nuestro modelo para la clasificación.
+
+## 9.3. Clasificación a través de modelos de regresión
+
+### 9.3.1. Regresión lineal
+
+A continuación, vamos a mostrar el desempeño de nuestro juego de datos reducido a través de algoritmos basados en la regresión lineal.
+
+```{r models, echo=TRUE}
+
+
+modelo1 = lm(type ~ PC1 ,data=data.new.pca)
+modelo2 = lm(type ~ PC2 ,data=data.new.pca)
+modelo3 = lm(type ~ PC3 ,data=data.new.pca)
+modelo4 = lm(type ~ PC4 ,data=data.new.pca)
+modelo5 = lm(type ~ quality ,data=data.new.pca)
+modelo6 = lm(type ~ PC1+PC2 ,data=data.new.pca)
+modelo7 = lm(type ~ PC1+PC2+PC3 ,data=data.new.pca)
+modelo8 = lm(type ~ PC1+PC2+PC3+PC4 ,data=data.new.pca)
+modelo9 = lm(type ~ PC1+PC2+PC3+PC4+quality ,data=data.new.pca)
+
+summary(modelo1)
+summary(modelo2)
+summary(modelo3)
+summary(modelo4)
+summary(modelo5)
+summary(modelo6)
+summary(modelo7)
+summary(modelo8)
+summary(modelo9)
+
+
+```
+Observando los valores para la métrica R cuadrado ajustado, podemos contemplar
+que ninguno de los modelos elaborados son suficientes para realizar una clasificación
+aceptable debido a que el valor de dicha métrica es muy bajo.
+
+### 9.3.2. Regresión logística
+
+A continuación, vamos a mostrar el desempeño de nuestro juego de datos reducido a través de algoritmos basados en la regresión logística.
+
+```{r logit, echo=TRUE}
+
+
+data.new.pca$type = replace(data.new.pca$type, data.new.pca$type==2,0)
+m1 = glm(type ~ PC1,data=data.new.pca, family="binomial")
+m2 = glm(type ~ PC2,data=data.new.pca, family="binomial")
+m3 = glm(type ~ PC3,data=data.new.pca, family="binomial")
+m4 = glm(type ~ PC4,data=data.new.pca, family="binomial")
+m5 = glm(type ~ quality,data=data.new.pca, family="binomial")
+m6 = glm(type ~ PC1+PC2,data=data.new.pca, family="binomial")
+m7 = glm(type ~ PC1+PC2+PC3,data=data.new.pca, family="binomial")
+m8 = glm(type ~ PC1+PC2+PC3+PC4,data=data.new.pca, family="binomial")
+m9 = glm(type ~ PC1+PC2+PC3+PC4+quality,data=data.new.pca, family="binomial")
+summary(m1)
+summary(m2)
+summary(m3)
+summary(m4)
+summary(m5)
+summary(m6)
+summary(m7)
+summary(m8)
+summary(m9)
+```
+Visualizando los distintos AIC (Criterio de Información de Akaike), podemos contemplar que el modelo 9
+es aquel que presenta un mejor rendimiento.
+
+# Conclusiones
+
+Las tareas que se han realizado en esta práctica se han centrado en el análisis de los datos que conforman el juego de datos basado en los distintos tipos de vino. Esto conlleva la realización de un análisis descriptivo del juego de datos, la detección y tratamiento de valores vacíos y outliers, la discretización de atributos, un análisis de correlación entre las distintas variables y la reducción de dimensionalidad a través del método PCA.
+
+
+Tras obtener el nuevo conjunto de datos ya reducido, hemos propuesto realizar una serie de acciones:
+
+- En primer lugar, realizamos un análisis de correlación entre las distintas variables.
+
+- En segundo lugar, elaboramos la clasificación de las observaciones en vinos rojos y blancos a través del algoritmo C5.0 basado en árboles de decisión.
+
+- En tercer lugar, procedimos a comprobar la capacidad predictiva de nuestro juego de datos a través de regresiones lineales y mediante regresiones logísticas.
+
+El objetivo principal del proyecto se ha cumplido, que se trató de crear un clasificador entre vinos rojos
+y blancos ateniendo a sus características. Se ha podido responder al problema debido a que gracias
+al algoritmo basado en árboles de decisión se ha obtenido un clasificador con un 92.06% de exactitud
+en sus predicciones. Cabe destacar que el rendimiento del algoritmo se ha basado en el dataset con
+los atributos reducidos, que a priori, ofrecen un peor desempeño que el conjunto de datos total.
+
+La realización de esta práctica me ha supuesto un gran reto debido a que se trata de la aplicación de la mayoría de los conocimientos de la asignatura en una práctica. Cabe destacar que se podrían realizar mayores mejoras para futuras versiones del proyecto, como son:
+
+
+* Aplicación de algoritmos de aprendizaje no supervisado.
+
+* Aplicación de otros algoritmos basados en apredizaje supervisado como por ejemplo, redes neuronales o randomforest.
+
+* Hacer uso de otras pruebas estadísticas para comprobar el rendimiento de los distintos atributos y modelos.
+
+* Comparar el rendimiento de los modelos utilizando el dataset con los componentes ya reducidos y el juego de datos original.
+
+* Orientar la práctica de otra forma, intentando predecir el grado de calidad.
+
+
+# Bibliografía
+
+* Joaquín Amat Rodrigo, 2017. Recuperado de https://rpubs.com/Joaquin_AR/287787
+
+* Analytics Vidhya, 2016. Recuperado de https://www.analyticsvidhya.com/blog/2016/03/pca-practical-guide-principal-component-analysis-python/
+
+* Jake VanderPlas, 2016. Recuperado de https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html
+
+* Linh Ngo, 2018. Recuperado de https://blog.bioturing.com/2018/06/18/how-to-read-pca-biplots-and-scree-plots/
+
+* Hatcher & Stepansky, 1994. Recuperado de https://www.researchgate.net/profile/Ehsan_Khedive/post/How_many_components_can_I_retrieve_in_principal_component_analysis/attachment/59d626f2c49f478072e9b1be/AS%3A272185124425729%401441905398541/download/Principal+Component+Analysis+SAS.pdf
+
+* Laia Subirats Maté, Diego Oswaldo Pérez Trenar & Mireia Calvo González, 2019. Recuperado de http://materials.cv.uoc.edu/daisy/Materials/PID_00265704/pdf/PID_00265704.pdf
+
+* Joseph Rickert, 2019. Recuperado de https://rviews.rstudio.com/2019/03/01/some-r-packages-for-roc-curves/
+
+* Paulo Cortez, A.Cerdeira, F.Almeida,T.Matos & J.Reis, 2009. Recuperado de https://archive.ics.uci.edu/ml/datasets/Wine+Quality
